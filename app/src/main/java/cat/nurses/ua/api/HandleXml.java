@@ -1,8 +1,10 @@
 package cat.nurses.ua.api;
 
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -27,39 +29,41 @@ public class HandleXml {
         return images;
     }
 
-    public void parseXMLAndStoreIt(XmlPullParser myParser) {
-        int event;
-        String text = null;
-        try {
-            event = myParser.getEventType();
+    public void parseXMLAndStoreIt(XmlPullParser xpp) throws IOException, XmlPullParserException {
+        ArrayList<ImageSource> results = new ArrayList<>() ;
+        xpp.nextTag();
+        xpp.nextTag();
+        xpp.nextTag();
+        xpp.require(XmlPullParser.START_TAG, null, "images");
+        while (xpp.nextTag() == XmlPullParser.START_TAG) {
+            xpp.require(XmlPullParser.START_TAG, null, "image");
 
-            while (event != XmlPullParser.END_DOCUMENT) {
-                String name = myParser.getName();
+            xpp.nextTag();
+            xpp.require(XmlPullParser.START_TAG, null, "url");
+            String url = xpp.nextText();
+            xpp.require(XmlPullParser.END_TAG, null, "url");
 
-                switch (event){
-                    case XmlPullParser.START_TAG:
-                        break;
+            xpp.nextTag();
+            xpp.require(XmlPullParser.START_TAG, null, "id");
+            String id = xpp.nextText();
+            xpp.require(XmlPullParser.END_TAG, null, "id");
 
-                    case XmlPullParser.TEXT:
-                        text = myParser.getText();
-                        break;
+            xpp.nextTag();
+            xpp.require(XmlPullParser.START_TAG, null, "source_url");
+            String sourceUrl = xpp.nextText();
+            xpp.require(XmlPullParser.END_TAG, null, "source_url");
 
-                    case XmlPullParser.END_TAG:
-                        if(name.equals("id")){
-                            ImageSource image = new ImageSource();
+            xpp.nextTag();
+            xpp.require(XmlPullParser.END_TAG, null, "image");
 
-                            //images.add();
-                        }
-                        break;
-                }
-                event = myParser.next();
-            }
-            parsingComplete = false;
+            ImageSource image = new ImageSource();
+            image.setUrl(url);
+            image.setIdImage(id);
+            image.setSourceUrl(sourceUrl);
+            images.add(image);
         }
-
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+        parsingComplete = false;
+        xpp.require(XmlPullParser.END_TAG, null, "images");
     }
 
     public void fetchXML(){
