@@ -9,8 +9,8 @@ import android.view.MenuItem;
 import cat.nurses.ua.fragments.AllCatsListFragment;
 
 public class MainActivity extends FragmentActivity {
-
     private FragmentTabHost mTabHost;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

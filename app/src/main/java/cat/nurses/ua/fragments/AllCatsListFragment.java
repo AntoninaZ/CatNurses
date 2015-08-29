@@ -10,8 +10,8 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import cat.nurses.ua.R;
-import cat.nurses.ua.api.HttpClient;
-
+import cat.nurses.ua.adapters.CatsListAdapter;
+import cat.nurses.ua.api.HandleXml;
 
 /**
  * Created by antonina on 28.08.15.
@@ -25,7 +25,12 @@ public class AllCatsListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_catslist, container, false);
         lvCatsList = (ListView) v.findViewById(R.id.lv_catsList);
-        new HttpClient().getCatsList(getActivity(), lvCatsList);
+        HandleXml obj = new HandleXml("http://thecatapi.com/api/images/get?format=xml&size=med&results_per_page=20");
+        obj.fetchXML();
+        while(obj.parsingComplete){
+            catsArrayList = obj.getUrl();
+        }
+        lvCatsList.setAdapter(new CatsListAdapter(getActivity(), catsArrayList));
         return v;
     }
 }
