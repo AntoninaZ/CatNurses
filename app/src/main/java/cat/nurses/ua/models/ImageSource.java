@@ -1,9 +1,11 @@
 package cat.nurses.ua.models;
 
+import java.io.Serializable;
+
 /**
  * Created by antonina on 29.08.15.
  */
-public class ImageSource {
+public class ImageSource implements Serializable {
     private String url;
     private String idImage;
     private String sourceUrl;

@@ -7,8 +7,12 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import cat.nurses.ua.models.ImageSource;
 
@@ -30,7 +34,6 @@ public class HandleXml {
     }
 
     public void parseXMLAndStoreIt(XmlPullParser xpp) throws IOException, XmlPullParserException {
-        ArrayList<ImageSource> results = new ArrayList<>() ;
         xpp.nextTag();
         xpp.nextTag();
         xpp.nextTag();
@@ -74,23 +77,46 @@ public class HandleXml {
                     URL url = new URL(urlString);
                     HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 
-                    conn.setReadTimeout(10000 /* milliseconds */);
-                    conn.setConnectTimeout(15000 /* milliseconds */);
+                    conn.setReadTimeout(10000);
+                    conn.setConnectTimeout(15000);
                     conn.setRequestMethod("GET");
                     conn.setDoInput(true);
                     conn.connect();
 
                     InputStream stream = conn.getInputStream();
                     xmlFactoryObject = XmlPullParserFactory.newInstance();
-                    XmlPullParser myparser = xmlFactoryObject.newPullParser();
+                    XmlPullParser xpp = xmlFactoryObject.newPullParser();
 
-                    myparser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-                    myparser.setInput(stream, null);
+                    xpp.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+                    xpp.setInput(stream, null);
 
-                    parseXMLAndStoreIt(myparser);
+                    parseXMLAndStoreIt(xpp);
                     stream.close();
                 }
                 catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+    }
+
+    public void setFavorites() throws IOException {
+        Thread thread = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL(urlString);
+                    HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+
+                    conn.setReadTimeout(10000);
+                    conn.setConnectTimeout(15000);
+                    conn.setRequestMethod("POST");
+                    conn.setDoInput(true);
+                    conn.setDoOutput(true);
+                    conn.connect();
+                }
+                    catch (Exception e) {
                     e.printStackTrace();
                 }
             }

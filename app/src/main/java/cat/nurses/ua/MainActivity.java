@@ -1,31 +1,31 @@
 package cat.nurses.ua;
 
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTabHost;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import cat.nurses.ua.fragments.AllCatsListFragment;
+import cat.nurses.ua.fragments.TabsCatsListFragment;
 
-public class MainActivity extends FragmentActivity {
-    private FragmentTabHost mTabHost;
+public class MainActivity extends AppCompatActivity{
+    private Fragment mPresentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mTabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
-        mTabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        configContent(TabsCatsListFragment.newInstance());
+    }
 
-        mTabHost.addTab(mTabHost.newTabSpec("simple").setIndicator("Simple"),
-                AllCatsListFragment.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("contacts").setIndicator("Contacts"),
-                AllCatsListFragment.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("custom").setIndicator("Custom"),
-                AllCatsListFragment.class, null);
-
-
+    public void configContent(Fragment fragment) {
+        if (!this.isFinishing() && fragment != null) {
+            mPresentFragment = fragment;
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mPresentFragment).commit();
+        }
     }
 
     @Override

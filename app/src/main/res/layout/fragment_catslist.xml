@@ -4,7 +4,9 @@
     android:layout_height="match_parent">
 
     <ListView
-        android:id="@+id/lv_catsList"
+        android:id="@+id/lv_catsList_FCL"
+        android:dividerHeight="@dimen/list_view_divider_height_size"
+        android:divider="@color/list_view_divider_color"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
